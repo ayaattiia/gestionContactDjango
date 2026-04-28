@@ -29,10 +29,20 @@
 
                     <div class="col-md-4">
                         <select name="sort" class="form-select">
-                            <option value="prenom" {% if current_sort == 'prenom' %}selected{% endif %}>Trier par Prénom (A-Z)</option>
-                            <option value="date_ajout" {% if current_sort == 'date_ajout' %}selected{% endif %}>Date d'ajout (Récent)</option>
+                            <option value="nom" {% if current_sort == 'nom' %}selected{% endif %}>Nom (A-Z)</option>
+                            <option value="prenom" {% if current_sort == 'prenom' %}selected{% endif %}>Prénom (A-Z)</option>
+                            <option value="email" {% if current_sort == 'email' %}selected{% endif %}>Email (A-Z)</option>
+                            <option value="telephone" {% if current_sort == 'telephone' %}selected{% endif %}>Téléphone</option>
+                            <option value="date_ajout" {% if current_sort == 'date_ajout' %}selected{% endif %}>Date d'ajout</option>
                         </select>
                     </div>
+
+                    <!-- <div class="col-md-2">
+                        <select name="order" class="form-select">
+                            <option value="desc" {% if current_order == 'desc' %}selected{% endif %}>↓ Décroissant</option>
+                            <option value="asc" {% if current_order == 'asc' %}selected{% endif %}>↑ Croissant</option>
+                        </select>
+                    </div> -->
 
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100 fw-bold">Filtrer</button>
@@ -66,7 +76,11 @@
                         <div>
                             <h6 class="text-uppercase mb-1 small">Dernier Contact</h6>
                             <h2 class="mb-0 h5 fw-bold text-truncate" style="max-width: 150px;">
-                                {% if contacts %}{{ contacts.first.nom }}{% else %}---{% endif %}
+                                {% if dernier_contact %}
+                                    {{ dernier_contact.nom }}
+                                {% else %}
+                                    ---
+                                {% endif %}                            
                             </h2>
                         </div>
                         <i class="fas fa-user-plus fa-2x opacity-50"></i>
@@ -93,10 +107,18 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>Identité</th>
+                            <th>
+                                <a href="?sort=nom&order={% if current_sort == 'nom' %}{% if current_order == 'desc' %}asc{% else %}desc{% endif %}{% else %}asc{% endif %}" class="text-white text-decoration-none">
+                                    Identité {% if current_sort == 'nom' %}{% if current_order == 'desc' %}↓{% else %}↑{% endif %}{% endif %}
+                                </a>
+                            </th>
                             <th>Coordonnées</th>
                             <th>Catégorie</th>
-                            <th>Date d'ajout</th>
+                            <th>
+                                <a href="?sort=date_ajout&order={% if current_sort == 'date_ajout' %}{% if current_order == 'desc' %}asc{% else %}desc{% endif %}{% else %}desc{% endif %}" class="text-white text-decoration-none">
+                                    Date d'ajout {% if current_sort == 'date_ajout' %}{% if current_order == 'desc' %}↓{% else %}↑{% endif %}{% endif %}
+                                </a>
+                            </th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -145,22 +167,53 @@
         </div>
 
         {% if is_paginated %}
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}">&laquo; Début</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}">Précédent</a></li>
-                {% endif %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
 
-                <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} / {{ paginator.num_pages }}</span></li>
-
-                {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}">Suivant</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}">Fin &raquo;</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+        {# First page #}
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1&search={{ search_query }}&sort={{ current_sort }}&order={{ current_order }}">
+                « Début
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort={{ current_sort }}&order={{ current_order }}">
+                Précédent
+            </a>
+        </li>
         {% endif %}
+
+        {# Page numbers #}
+        {% for num in paginator.page_range %}
+            {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                {% if num == page_obj.number %}
+                <span class="page-link">{{ num }}</span>
+                {% else %}
+                <a class="page-link" href="?page={{ num }}&search={{ search_query }}&sort={{ current_sort }}&order={{ current_order }}">{{ num }}</a>
+                {% endif %}
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {# Next and Last #}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort={{ current_sort }}&order={{ current_order }}">
+                Suivant
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ paginator.num_pages }}&search={{ search_query }}&sort={{ current_sort }}&order={{ current_order }}">
+                Fin »
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
 
         {% else %}
         <div class="alert alert-info text-center shadow-sm py-5 border-0">
