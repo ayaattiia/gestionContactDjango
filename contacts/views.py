@@ -60,7 +60,7 @@ class ContactCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('contacts:list')
 
     def form_valid(self, form):
-        form.instance.user = self.request.user # ou owner selon ton modèle
+        form.instance.owner = self.request.user
         return super().form_valid(form)
 
 class ContactUpdateView(LoginRequiredMixin, UpdateView):
