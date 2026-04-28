@@ -1,0 +1,53 @@
+{% extends 'contacts/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">⚠️ Confirmation de suppression</h3>
+            </div>
+
+            <div class="card-body">
+                <p class="lead">
+                    Êtes-vous sûr de vouloir supprimer le contact suivant ?
+                </p>
+
+                <div class="alert alert-warning">
+                    <strong>{{ contact.nom }} {{ contact.prenom }}</strong>
+
+                    {% if contact.email %}
+                        <br>Email : {{ contact.email }}
+                    {% endif %}
+
+                    {% if contact.telephone %}
+                        <br>Téléphone : {{ contact.telephone }}
+                    {% endif %}
+                </div>
+
+                <p class="text-danger">
+                    Cette action est irréversible !
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'contacts:detail' contact.pk %}" class="btn btn-secondary">
+                            Annuler
+                        </a>
+
+                        <button type="submit" class="btn btn-danger">
+                            🗑 Confirmer la suppression
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

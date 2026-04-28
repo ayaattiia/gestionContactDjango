@@ -1,0 +1,88 @@
+{% extends 'contacts/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center min-vh-75">
+        <div class="col-lg-6">
+            <h1 class="display-3 fw-bold text-dark mb-3">
+                Gérez vos <span class="text-primary">Contacts</span> en toute simplicité.
+            </h1>
+            <p class="lead text-muted mb-4">
+                Une application moderne pour organiser votre réseau professionnel et personnel. 
+                Stockez, triez et retrouvez vos contacts en un clin d'œil.
+            </p>
+            
+            {% if not user.is_authenticated %}
+                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 me-md-2 shadow">
+                        <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                    </a>
+                    <a href="{% url 'signup' %}" class="btn btn-outline-secondary btn-lg px-4 shadow-sm">
+                        Créer un compte
+                    </a>
+                </div>
+            {% else %}
+                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                    <a href="{% url 'contacts:list' %}" class="btn btn-primary btn-lg px-4 shadow">
+                        Accéder à mon répertoire
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="position-relative">
+                <div class="bg-primary rounded-circle position-absolute opacity-10" style="width: 400px; height: 400px; top: -50px; right: -20px; z-index: -1;"></div>
+                <div class="card border-0 shadow-lg p-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle bg-info p-3 me-3 text-white">
+                                <i class="fas fa-address-book fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">Gestionnaire Intelligent</h5>
+                                <small class="text-muted">Interface optimisée</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Recherche instantanée</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Tri personnalisé</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Catégories dynamiques</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 pt-5 text-center">
+        <div class="col-md-4 mb-4">
+            <div class="p-4 rounded shadow-sm bg-white border">
+                <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                <h4>Recherche</h4>
+                <p class="text-muted">Trouvez vos contacts par nom, email ou téléphone.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4 rounded shadow-sm bg-white border">
+                <i class="fas fa-mobile-alt fa-3x text-success mb-3"></i>
+                <h4>Responsive</h4>
+                <p class="text-muted">Accédez à votre liste sur mobile, tablette ou PC.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="p-4 rounded shadow-sm bg-white border">
+                <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                <h4>Sécurisé</h4>
+                <p class="text-muted">Vos données sont protégées par votre compte personnel.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .min-vh-75 { min-height: 75vh; }
+    body { background-color: #f8f9fa; }
+</style>
+{% endblock %}
